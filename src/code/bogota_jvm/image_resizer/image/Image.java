@@ -50,6 +50,20 @@ public class Image {
 	}
 
 	/**
+	 * Checks if this image is proportional to a given size.
+	 * 
+	 * This is not an appropriate implementation for real uses.
+	 * 
+	 * This is useful so that you can call 
+	 * @param width
+	 * @param height
+	 * @return true if the image is proportional to the given size, false otherwise.
+	 */
+	public boolean isProportional(int width, int height) {
+		return width * getHeight() == height * getWidth();
+	}
+	
+	/**
 	 * Resizes the image to the given size.
 	 * 
 	 * The algorithm is based on {@link http://www.mkyong.com/java/how-to-resize-an-image-in-java/} 
