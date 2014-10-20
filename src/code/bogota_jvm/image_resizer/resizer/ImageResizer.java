@@ -50,16 +50,14 @@ public class ImageResizer {
 	}
 
 	public void run() throws IOException {
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
-			for (Path path : directoryStream) {
-				Optional.of(path)
-				        .filter(Images::isImage)
-				        .flatMap(Image::read)
-				        .filter(image -> image.isProportional(width, height))
-				        .map(image -> image.resize(width, height))
-				        .ifPresent(image -> write(image, destination));
-			}
-		}
+		Files.list(source)
+			 .filter(Images::isImage)
+			 .map(Image::read)
+			 .filter(Optional::isPresent)
+			 .map(Optional::get)
+			 .filter(image -> image.isProportional(width, height))
+			 .map(image -> image.resize(width, height))
+			 .forEach(image -> write(image, destination));
 	}
 
 	public static class Builder {
