@@ -54,7 +54,9 @@ public class Image {
 	 * 
 	 * This is not an appropriate implementation for real uses.
 	 * 
-	 * This is useful so that you can call 
+	 * This is useful so that you can call resize method and be sure you get
+	 * useful results. Call it always before calling resize() and only code it
+	 * if this method returned true.
 	 * @param width
 	 * @param height
 	 * @return true if the image is proportional to the given size, false otherwise.
@@ -62,7 +64,7 @@ public class Image {
 	public boolean isProportional(int width, int height) {
 		return width * getHeight() == height * getWidth();
 	}
-	
+
 	/**
 	 * Resizes the image to the given size.
 	 * 

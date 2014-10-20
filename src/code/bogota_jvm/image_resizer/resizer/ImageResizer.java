@@ -24,7 +24,7 @@ import code.bogota_jvm.image_resizer.image.Images;
  * 										  .build();
  * 
  * Note that while the source and destination are mandatory, width and height
- * are optional, its default values being 600 and 480.
+ * are optional, its default values being 640 and 480.
  */
 public class ImageResizer {
 
@@ -41,13 +41,24 @@ public class ImageResizer {
 	}
 
 	public void run() throws IOException {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
+			for (Path path : directoryStream) {
+				if (Images.isImage(path)) {
+					Image image = new Image(path);
+					if (image.isProportional(width, height)) {
+						image = image.resize(width, height);
+						image.write(destination);
+					}
+				}
+			}
+		}
 	}
 
 	public static class Builder {
 
 		private Path source;
 		private Path destination;
-		private int width = 600;
+		private int width = 640;
 		private int height = 480;
 
 		/**
