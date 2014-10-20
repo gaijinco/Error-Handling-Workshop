@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
@@ -17,15 +18,18 @@ public class Image {
 	private final Path filename;
 
 	/**
-	 * Creates an Image from the given path.
+	 * Tries to create an Image from the given path.
 	 * 
 	 * @param path
-	 * @throws IOException
-	 *             if there's an error reading the image.
+	 * @return an Optional<Image>
 	 */
-	public Image(Path path) throws IOException {
-		image = ImageIO.read(path.toFile());
-		filename = path.getFileName();
+	public static Optional<Image> read(Path path) {
+		try {
+			BufferedImage image = ImageIO.read(path.toFile());
+			return Optional.of(new Image(image, path.getFileName()));
+		} catch (IOException e) {
+			return Optional.empty();
+		}
 	}
 
 	private Image(BufferedImage image, Path filename) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import code.bogota_jvm.image_resizer.image.Image;
 import code.bogota_jvm.image_resizer.image.Images;
@@ -40,16 +41,23 @@ public class ImageResizer {
 		this.height = builder.height;
 	}
 
+	private void write(Image image, Path destination) {
+		try {
+			image.write(destination);
+		} catch (IOException e) {
+			// ignore until we begin to write our error handling code.
+		}
+	}
+
 	public void run() throws IOException {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(source)) {
 			for (Path path : directoryStream) {
-				if (Images.isImage(path)) {
-					Image image = new Image(path);
-					if (image.isProportional(width, height)) {
-						image = image.resize(width, height);
-						image.write(destination);
-					}
-				}
+				Optional.of(path)
+				        .filter(Images::isImage)
+				        .flatMap(Image::read)
+				        .filter(image -> image.isProportional(width, height))
+				        .map(image -> image.resize(width, height))
+				        .ifPresent(image -> write(image, destination));
 			}
 		}
 	}
